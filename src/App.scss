@@ -1,17 +1,12 @@
-/* ==========================================================================
-   LETS BUILD TODOIST
-   ========================================================================== */
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,700,900');
 
 // General Settings
 html {
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 *,
 *:before,
 *:after {
-  -webkit-box-sizing: inherit;
   box-sizing: inherit;
 }
 
@@ -32,17 +27,50 @@ ul {
   padding: 0;
 }
 
+// Accessibility utilities
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+
+  &:focus {
+    top: 0;
+  }
+}
+
+// Focus visible styles for better keyboard navigation
+*:focus-visible {
+  outline: 2px solid #db4c3f;
+  outline-offset: 2px;
+}
+
 // Variables
 $generic-box-shadow:
   rgba(0, 0, 0, 0.1) 0px 0px 0px 1px,
   rgba(0, 0, 0, 0.1) 0px 4px 11px;
-$generic-border: 1px solid #000000;
+$generic-border: 1px solid #f1f1f1;
 $generic-bg: #db4c3f;
 
 /* Mixins
   ============================================ */
 @mixin box-overlay() {
-  -webkit-box-shadow: $generic-box-shadow;
   box-shadow: $generic-box-shadow;
   position: absolute;
   width: 100%;
@@ -52,20 +80,12 @@ $generic-bg: #db4c3f;
 }
 
 @mixin va($va-align: center) {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
 
   @if $va-align != center {
-    -webkit-box-pack: left;
-    -ms-flex-pack: left;
     justify-content: left;
   } @else {
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
     justify-content: center;
   }
 }
@@ -108,12 +128,11 @@ $generic-bg: #db4c3f;
 @mixin transparent-button() {
   background-color: transparent;
   border: 0;
+  cursor: pointer;
 }
 
 @mixin task-item() {
   list-style-type: none;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   line-height: 18px;
   color: #333;
@@ -140,7 +159,6 @@ $generic-bg: #db4c3f;
   ============================================ */
 .darkmode {
   header {
-    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.15);
     background-color: #282828;
     border-color: transparent;
@@ -152,9 +170,7 @@ $generic-bg: #db4c3f;
 header {
   border-bottom: solid 1px #ca2100;
   background-color: $generic-bg;
-  -webkit-transition: height 200ms ease-in;
   transition: height 200ms ease-in;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   height: 44px;
   z-index: 400;
@@ -168,8 +184,6 @@ header {
 
   nav {
     display: grid;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
@@ -234,8 +248,6 @@ header {
               @include transparent-button();
               color: white;
               cursor: pointer;
-              display: -webkit-box;
-              display: -ms-flexbox;
               display: flex;
 
               svg {
@@ -269,8 +281,6 @@ header {
 
   li {
     &:hover .sidebar__project-delete {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
     }
   }
@@ -283,11 +293,7 @@ header {
       padding-left: 10px;
       padding-right: 15px;
       width: 100%;
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
     }
 
@@ -349,8 +355,6 @@ header {
   &__middle {
     margin-top: 20px;
     margin-bottom: 20px;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     border-bottom: $generic-border;
     padding-left: 10px;
@@ -361,7 +365,6 @@ header {
       margin-right: 10px;
 
       svg.hidden-projects {
-        -webkit-transform: rotate(-90deg);
         transform: rotate(-90deg);
       }
     }
@@ -379,8 +382,6 @@ header {
     li {
       list-style-type: none;
       color: #333;
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
       cursor: pointer;
       line-height: 1.5;
@@ -389,19 +390,13 @@ header {
       padding-right: 0;
 
       div:nth-child(1) {
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
         padding: 10px 0 10px 10px;
         width: 100%;
 
         span:first-of-type {
           margin-right: 10px;
-          display: -webkit-box;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-box-align: center;
-          -ms-flex-align: center;
           align-items: center;
 
           svg {
@@ -440,7 +435,7 @@ header {
       margin-bottom: 5px;
       line-height: normal;
       font-weight: normal;
-      font-size: 15px;
+      font-size: 13px;
     }
 
     button {
@@ -457,8 +452,6 @@ header {
   ============================================ */
 .content {
   display: grid;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
   grid-template-columns: 1fr auto;
   max-width: 922px;
@@ -495,8 +488,6 @@ header {
   }
 
   &__list li {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     line-height: 18px;
     color: #333;
@@ -508,14 +499,8 @@ header {
 
     .checkbox-holder {
       margin-right: 20px;
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
       justify-content: center;
       line-height: 16px;
 
@@ -531,6 +516,13 @@ header {
       }
     }
   }
+
+  &__empty {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+  }
 }
 
 /* Add Task
@@ -545,7 +537,6 @@ header {
     width: 100%;
     height: 100%;
     z-index: 2000;
-    -webkit-transition: opacity 0.2s ease-in;
     transition: opacity 0.2s ease-in;
     height: calc(100vh);
 
@@ -563,7 +554,6 @@ header {
       left: 50%;
       top: 50%;
       padding: 20px 30px;
-      -webkit-transform: translate(-50%, -50%);
       transform: translate(-50%, -50%);
 
       .header {
@@ -576,10 +566,11 @@ header {
     .add-task__cancel-x {
       cursor: pointer;
       color: gray;
-      float: right;
-      font-weight: bold;
       font-size: 12px;
       margin-top: 10px;
+      float: right;
+      font-weight: bold;
+      @include transparent-button();
     }
   }
 
@@ -593,6 +584,7 @@ header {
     float: right;
     color: gray;
     margin: 20px 10px;
+    @include transparent-button();
   }
 
   &__project {
@@ -607,6 +599,7 @@ header {
     height: 35px;
     padding-left: 10px;
     padding-right: 10px;
+    font-size: 14px;
   }
 
   &__cancel,
@@ -616,86 +609,36 @@ header {
 
   &__cancel {
     @include cancel();
+    @include transparent-button();
   }
 
   &__submit {
     @include btn('90px');
   }
-}
 
-.add-task__shallow,
-.add-project {
-  @include no-select;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.add-task__plus,
-.add-project__plus {
-  color: #dd4b39;
-  font-size: 18px;
-}
-
-.add-task__text,
-.add-project__text {
-  display: inline-block;
-  color: #545454;
-  font-size: 14px;
-  margin-left: 15px;
-}
-
-/* Task Date
-  ============================================ */
-.task-date {
-  @include box-overlay();
-  background-color: #fff;
-  width: 200px;
-  right: 0;
-
-  &__list li {
-    @include task-item();
-    padding: 0;
-
-    div:nth-child(1) {
-      padding: 10px;
-      width: 100%;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-align: center;
-      -ms-flex-align: center;
-      align-items: center;
-
-      span:first-of-type {
-        margin-right: 10px;
-
-        svg {
-          fill: grey;
-        }
-      }
-    }
-  }
-}
-
-/* Project Overlay
-  ============================================ */
-.project-overlay {
-  @include box-overlay();
-  background-color: white;
-
-  @include mq('900px') {
-    width: 200px;
-    right: 0;
+  &__error {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-bottom: 10px;
   }
 
-  &__list li {
-    @include task-item();
-    padding: 0;
+  &__shallow {
+    @include no-select;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
 
-    div:nth-child(1) {
-      width: 100%;
-      padding: 10px;
-    }
+  &__plus {
+    color: #dd4b39;
+    font-size: 18px;
+  }
+
+  &__text {
+    display: inline-block;
+    color: #545454;
+    font-size: 14px;
+    margin-left: 15px;
   }
 }
 
@@ -718,6 +661,7 @@ header {
     height: 35px;
     padding-left: 10px;
     padding-right: 10px;
+    font-size: 14px;
   }
 
   &__submit {
@@ -726,5 +670,73 @@ header {
 
   &__cancel {
     @include cancel();
+    @include transparent-button();
+  }
+
+  &__error {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  &__plus {
+    color: #dd4b39;
+    font-size: 18px;
+  }
+
+  &__text {
+    @include transparent-button();
+    display: inline-block;
+    color: #545454;
+    font-size: 14px;
+    margin-left: 15px;
+    cursor: pointer;
+  }
+}
+
+/* Task Date
+  ============================================ */
+.task-date {
+  @include box-overlay();
+  background-color: #fff;
+  width: 200px;
+  right: 0;
+
+  &__list li {
+    @include task-item();
+    padding: 0;
+
+    div:nth-child(1) {
+      padding: 10px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+
+      span:first-of-type {
+        margin-right: 10px;
+
+        svg {
+          fill: grey;
+        }
+      }
+    }
+  }
+}
+
+/* Project Overlay
+  ============================================ */
+.project-overlay {
+  @include box-overlay();
+  background-color: white;
+
+  &__list li {
+    @include task-item();
+    padding: 0;
+
+    div:nth-child(1) {
+      width: 100%;
+      padding: 10px;
+    }
   }
 }

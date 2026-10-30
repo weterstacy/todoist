@@ -14,109 +14,128 @@ export const Sidebar = () => {
   const [active, setActive] = useState('inbox');
   const [showProjects, setShowProjects] = useState(true);
 
+  const handleNavigation = (key, projectId) => {
+    setActive(key);
+    setSelectedProject(projectId);
+  };
+
   return (
-    <div className="sidebar" data-testid="sidebar">
-      <ul className="sidebar__generic">
-        <li
-          data-testid="inbox"
-          className={active === 'inbox' ? 'active' : undefined}
-        >
-          <div
-            data-testid="inbox-action"
-            aria-label="Show inbox tasks"
-            tabIndex={0}
-            role="button"
-            onClick={() => {
-              setActive('inbox');
-              setSelectedProject('INBOX');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                setActive('inbox');
-                setSelectedProject('INBOX');
-              }
-            }}
+    <aside
+      className="sidebar"
+      data-testid="sidebar"
+      role="navigation"
+      aria-label="Project navigation"
+    >
+      <nav>
+        <ul className="sidebar__generic" role="menu" aria-label="Quick access">
+          <li
+            data-testid="inbox"
+            className={active === 'inbox' ? 'active' : undefined}
+            role="none"
           >
-            <span>
-              <FaInbox />
-            </span>
-            <span>Inbox</span>
-          </div>
-        </li>
-        <li
-          data-testid="today"
-          className={active === 'today' ? 'active' : undefined}
-        >
-          <div
-            data-testid="today-action"
-            aria-label="Show today's tasks"
-            tabIndex={0}
-            role="button"
-            onClick={() => {
-              setActive('today');
-              setSelectedProject('TODAY');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                setActive('today');
-                setSelectedProject('TODAY');
-              }
-            }}
+            <div
+              data-testid="inbox-action"
+              aria-label="Show inbox tasks"
+              aria-current={active === 'inbox' ? 'page' : undefined}
+              tabIndex={0}
+              role="menuitem"
+              onClick={() => handleNavigation('inbox', 'INBOX')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleNavigation('inbox', 'INBOX');
+                }
+              }}
+            >
+              <span aria-hidden="true">
+                <FaInbox />
+              </span>
+              <span>Inbox</span>
+            </div>
+          </li>
+          <li
+            data-testid="today"
+            className={active === 'today' ? 'active' : undefined}
+            role="none"
           >
-            <span>
-              <FaRegCalendar />
-            </span>
-            <span>Today</span>
-          </div>
-        </li>
-        <li
-          data-testid="next_7"
-          className={active === 'next_7' ? 'active' : undefined}
-        >
-          <div
-            data-testid="next_7-action"
-            aria-label="Show tasks for the next 7 days"
-            tabIndex={0}
-            role="button"
-            onClick={() => {
-              setActive('next_7');
-              setSelectedProject('NEXT_7');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                setActive('next_7');
-                setSelectedProject('NEXT_7');
-              }
-            }}
+            <div
+              data-testid="today-action"
+              aria-label="Show today's tasks"
+              aria-current={active === 'today' ? 'page' : undefined}
+              tabIndex={0}
+              role="menuitem"
+              onClick={() => handleNavigation('today', 'TODAY')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleNavigation('today', 'TODAY');
+                }
+              }}
+            >
+              <span aria-hidden="true">
+                <FaRegCalendar />
+              </span>
+              <span>Today</span>
+            </div>
+          </li>
+          <li
+            data-testid="next_7"
+            className={active === 'next_7' ? 'active' : undefined}
+            role="none"
           >
-            <span>
-              <FaRegCalendarAlt />
-            </span>
-            <span>Next 7 days</span>
-          </div>
-        </li>
-      </ul>
-      <div
-        className="sidebar__middle"
-        aria-label="Show/hide projects"
-        onClick={() => setShowProjects(!showProjects)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') setShowProjects(!showProjects);
-        }}
-        role="button"
-        tabIndex={0}
-      >
-        <span>
-          <FaChevronDown
-            className={!showProjects ? 'hidden-projects' : undefined}
-          />
-        </span>
-        <h2>Projects</h2>
-      </div>
+            <div
+              data-testid="next_7-action"
+              aria-label="Show tasks for the next 7 days"
+              aria-current={active === 'next_7' ? 'page' : undefined}
+              tabIndex={0}
+              role="menuitem"
+              onClick={() => handleNavigation('next_7', 'NEXT_7')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleNavigation('next_7', 'NEXT_7');
+                }
+              }}
+            >
+              <span aria-hidden="true">
+                <FaRegCalendarAlt />
+              </span>
+              <span>Next 7 days</span>
+            </div>
+          </li>
+        </ul>
+        <div
+          className="sidebar__middle"
+          aria-label={showProjects ? 'Hide projects' : 'Show projects'}
+          aria-expanded={showProjects}
+          onClick={() => setShowProjects(!showProjects)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setShowProjects(!showProjects);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+        >
+          <span aria-hidden="true">
+            <FaChevronDown
+              className={!showProjects ? 'hidden-projects' : undefined}
+            />
+          </span>
+          <h2>Projects</h2>
+        </div>
 
-      <ul className="sidebar__projects">{showProjects && <Projects />}</ul>
+        <ul
+          className="sidebar__projects"
+          role="menu"
+          aria-label="User projects"
+        >
+          {showProjects && <Projects />}
+        </ul>
 
-      {showProjects && <AddProject />}
-    </div>
+        {showProjects && <AddProject />}
+      </nav>
+    </aside>
   );
 };

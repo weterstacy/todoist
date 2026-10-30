@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaRegListAlt, FaRegCalendarAlt } from 'react-icons/fa';
 import { format, addDays } from 'date-fns';
 import PropTypes from 'prop-types';
@@ -20,10 +20,47 @@ export const AddTask = ({
   const [showMain, setShowMain] = useState(shouldShowMain);
   const [showProjectOverlay, setShowProjectOverlay] = useState(false);
   const [showTaskDate, setShowTaskDate] = useState(false);
+  const [error, setError] = useState('');
 
   const { selectedProject } = useSelectedProjectValue();
+  const inputRef = useRef(null);
+
+  // Focus input when form shows
+  useEffect(() => {
+    if ((showMain || showQuickAddTask) && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showMain, showQuickAddTask]);
+
+  // Handle escape key to close quick add
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && showQuickAddTask) {
+        setShowMain(false);
+        setShowProjectOverlay(false);
+        setShowQuickAddTask(false);
+      }
+    };
+
+    if (showQuickAddTask) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+    return undefined;
+  }, [
+    showMain,
+    showQuickAddTask,
+    showProjectOverlay,
+    showTaskDate,
+    setShowQuickAddTask,
+  ]);
 
   const addTask = () => {
+    if (!task.trim()) {
+      setError('Task description is required');
+      return Promise.reject(new Error('Task required'));
+    }
+
     const projectId = project || selectedProject;
     let collatedDate = '';
 
@@ -33,28 +70,47 @@ export const AddTask = ({
       collatedDate = format(addDays(new Date(), 7), 'dd/MM/yyyy');
     }
 
-    return (
-      task &&
-      projectId &&
-      addDoc(collection(db, 'tasks'), {
-        archived: false,
-        projectId,
-        task,
-        date: collatedDate || taskDate,
-        userId: 'jlIFXIwyAL3tzHMtzRbw',
-      }).then(() => {
+    return addDoc(collection(db, 'tasks'), {
+      archived: false,
+      projectId,
+      task,
+      date: collatedDate || taskDate,
+      userId: 'jlIFXIwyAL3tzHMtzRbw',
+    })
+      .then(() => {
         setTask('');
         setProject('');
         setShowMain('');
         setShowProjectOverlay(false);
+        setError('');
+        // Announce task added
+        const announcement = document.getElementById('task-announcement');
+        if (announcement) {
+          announcement.textContent = `Task "${task}" added successfully`;
+        }
       })
-    );
+      .catch((err) => {
+        setError('Failed to add task. Please try again.');
+        console.error('Error adding task:', err);
+      });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (showQuickAddTask) {
+      addTask().then(() => setShowQuickAddTask(false));
+    } else {
+      addTask();
+    }
   };
 
   return (
     <div
       className={showQuickAddTask ? 'add-task add-task__overlay' : 'add-task'}
       data-testid="add-task-comp"
+      role={showQuickAddTask ? 'dialog' : undefined}
+      aria-label={showQuickAddTask ? 'Quick Add Task' : undefined}
+      aria-modal={showQuickAddTask ? 'true' : undefined}
     >
       {showAddTaskMain && (
         <div
@@ -62,13 +118,18 @@ export const AddTask = ({
           data-testid="show-main-action"
           onClick={() => setShowMain(!showMain)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') setShowMain(!showMain);
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setShowMain(!showMain);
+            }
           }}
           tabIndex={0}
           aria-label="Add task"
           role="button"
         >
-          <span className="add-task__plus">+</span>
+          <span className="add-task__plus" aria-hidden="true">
+            +
+          </span>
           <span className="add-task__text">Add Task</span>
         </div>
       )}
@@ -78,8 +139,11 @@ export const AddTask = ({
           {showQuickAddTask && (
             <>
               <div data-testid="quick-add-task">
-                <h2 className="header">Quick Add Task</h2>
-                <span
+                <h2 className="header" id="quick-add-heading">
+                  Quick Add Task
+                </h2>
+                <button
+                  type="button"
                   className="add-task__cancel-x"
                   data-testid="add-task-quick-cancel"
                   aria-label="Cancel adding task"
@@ -88,18 +152,9 @@ export const AddTask = ({
                     setShowProjectOverlay(false);
                     setShowQuickAddTask(false);
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      setShowMain(false);
-                      setShowProjectOverlay(false);
-                      setShowQuickAddTask(false);
-                    }
-                  }}
-                  tabIndex={0}
-                  role="button"
                 >
                   X
-                </span>
+                </button>
               </div>
             </>
           )}
@@ -113,71 +168,75 @@ export const AddTask = ({
             showTaskDate={showTaskDate}
             setShowTaskDate={setShowTaskDate}
           />
-          <input
-            className="add-task__content"
-            aria-label="Enter your task"
-            data-testid="add-task-content"
-            type="text"
-            value={task}
-            onChange={(e) => setTask(e.target.value)}
-          />
-          <button
-            type="button"
-            className="add-task__submit"
-            data-testid="add-task"
-            onClick={() =>
-              showQuickAddTask
-                ? addTask() && setShowQuickAddTask(false)
-                : addTask()
-            }
-          >
-            Add Task
-          </button>
+          <form onSubmit={handleSubmit}>
+            <input
+              id="task-input"
+              ref={inputRef}
+              className="add-task__content"
+              aria-label="Enter your task description"
+              data-testid="add-task-content"
+              type="text"
+              value={task}
+              onChange={(e) => {
+                setTask(e.target.value);
+                if (error) setError('');
+              }}
+              aria-invalid={error ? 'true' : 'false'}
+              aria-describedby={error ? 'task-error' : undefined}
+            />
+            {error && (
+              <div id="task-error" className="add-task__error" role="alert">
+                {error}
+              </div>
+            )}
+            <button
+              type="submit"
+              className="add-task__submit"
+              data-testid="add-task"
+            >
+              Add Task
+            </button>
+          </form>
           {!showQuickAddTask && (
-            <span
+            <button
+              type="button"
               className="add-task__cancel"
               data-testid="add-task-main-cancel"
               onClick={() => {
                 setShowMain(false);
                 setShowProjectOverlay(false);
               }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  setShowMain(false);
-                  setShowProjectOverlay(false);
-                }
-              }}
               aria-label="Cancel adding a task"
-              tabIndex={0}
-              role="button"
             >
               Cancel
-            </span>
+            </button>
           )}
-          <span
+          <button
+            type="button"
             className="add-task__project"
             data-testid="show-project-overlay"
             onClick={() => setShowProjectOverlay(!showProjectOverlay)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') setShowProjectOverlay(!showProjectOverlay);
-            }}
-            tabIndex={0}
-            role="button"
+            aria-label={
+              showProjectOverlay
+                ? 'Hide project selector'
+                : 'Show project selector'
+            }
+            aria-expanded={showProjectOverlay}
           >
-            <FaRegListAlt />
-          </span>
-          <span
+            <FaRegListAlt aria-hidden="true" />
+          </button>
+          <button
+            type="button"
             className="add-task__date"
             data-testid="show-task-date-overlay"
             onClick={() => setShowTaskDate(!showTaskDate)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') setShowTaskDate(!showTaskDate);
-            }}
-            tabIndex={0}
-            role="button"
+            aria-label={
+              showTaskDate ? 'Hide date selector' : 'Show date selector'
+            }
+            aria-expanded={showTaskDate}
           >
-            <FaRegCalendarAlt />
-          </span>
+            <FaRegCalendarAlt aria-hidden="true" />
+          </button>
         </div>
       )}
     </div>

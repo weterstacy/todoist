@@ -8,6 +8,12 @@ export const Checkbox = ({ id, taskDesc }) => {
     const taskRef = doc(db, 'tasks', id);
     updateDoc(taskRef, {
       archived: true,
+    }).then(() => {
+      // Announce task completion to screen readers
+      const announcement = document.getElementById('task-announcement');
+      if (announcement) {
+        announcement.textContent = `Task "${taskDesc}" completed`;
+      }
     });
   };
 
@@ -17,13 +23,17 @@ export const Checkbox = ({ id, taskDesc }) => {
       data-testid="checkbox-action"
       onClick={() => archiveTask()}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') archiveTask();
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          archiveTask();
+        }
       }}
-      aria-label={`Mark ${taskDesc} as done?`}
-      role="button"
+      aria-label={`Mark ${taskDesc} as done`}
+      role="checkbox"
+      aria-checked="false"
       tabIndex={0}
     >
-      <span className="checkbox" />
+      <span className="checkbox" aria-hidden="true" />
     </div>
   );
 };
