@@ -24,30 +24,29 @@ export const AddProject = ({ shouldShow = false }) => {
   const addProject = () => {
     if (!projectName.trim()) {
       setError('Project name is required');
-      return;
+      return Promise.reject(new Error('Project name required'));
     }
 
-    projectName &&
-      addDoc(collection(db, 'projects'), {
-        projectId,
-        name: projectName,
-        userId: 'jlIFXIwyAL3tzHMtzRbw',
+    return addDoc(collection(db, 'projects'), {
+      projectId,
+      name: projectName,
+      userId: 'jlIFXIwyAL3tzHMtzRbw',
+    })
+      .then(() => {
+        setProjects([...projects]);
+        setProjectName('');
+        setShow(false);
+        setError('');
+        // Announce project added
+        const announcement = document.getElementById('project-announcement');
+        if (announcement) {
+          announcement.textContent = `Project "${projectName}" added successfully`;
+        }
       })
-        .then(() => {
-          setProjects([...projects]);
-          setProjectName('');
-          setShow(false);
-          setError('');
-          // Announce project added
-          const announcement = document.getElementById('project-announcement');
-          if (announcement) {
-            announcement.textContent = `Project "${projectName}" added successfully`;
-          }
-        })
-        .catch((err) => {
-          setError('Failed to add project. Please try again.');
-          console.error('Error adding project:', err);
-        });
+      .catch((err) => {
+        setError('Failed to add project. Please try again.');
+        console.error('Error adding project:', err);
+      });
   };
 
   const handleSubmit = (e) => {
@@ -65,9 +64,6 @@ export const AddProject = ({ shouldShow = false }) => {
           aria-labelledby="add-project-heading"
         >
           <form onSubmit={handleSubmit}>
-            <label htmlFor="project-name-input" className="visually-hidden">
-              Project name
-            </label>
             <input
               id="project-name-input"
               ref={inputRef}
@@ -80,6 +76,7 @@ export const AddProject = ({ shouldShow = false }) => {
               data-testid="project-name"
               type="text"
               placeholder="Name your project"
+              aria-label="Project name"
               aria-invalid={error ? 'true' : 'false'}
               aria-describedby={error ? 'project-error' : undefined}
             />
