@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 import PropTypes from 'prop-types';
+import { doc, deleteDoc } from 'firebase/firestore';
 import { useProjectsValue, useSelectedProjectValue } from '../context';
-import { firebase } from '../firebase';
+import { db } from '../firebase';
 
 export const IndividualProject = ({ project }) => {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -10,15 +11,11 @@ export const IndividualProject = ({ project }) => {
   const { setSelectedProject } = useSelectedProjectValue();
 
   const deleteProject = (docId) => {
-    firebase
-      .firestore()
-      .collection('projects')
-      .doc(docId)
-      .delete()
-      .then(() => {
-        setProjects([...projects]);
-        setSelectedProject('INBOX');
-      });
+    const projectRef = doc(db, 'projects', docId);
+    deleteDoc(projectRef).then(() => {
+      setProjects([...projects]);
+      setSelectedProject('INBOX');
+    });
   };
 
   return (
