@@ -12,53 +12,63 @@ export const IndividualProject = ({ project }) => {
 
   const deleteProject = (docId) => {
     const projectRef = doc(db, 'projects', docId);
-    deleteDoc(projectRef).then(() => {
-      setProjects([...projects]);
-      setSelectedProject('INBOX');
-    });
+    deleteDoc(projectRef)
+      .then(() => {
+        setProjects([...projects]);
+        setSelectedProject('INBOX');
+        // Announce project deletion
+        const announcement = document.getElementById('project-announcement');
+        if (announcement) {
+          announcement.textContent = `Project "${project.name}" deleted`;
+        }
+      })
+      .catch((err) => {
+        console.error('Error deleting project:', err);
+      });
   };
 
   return (
     <>
-      <span className="sidebar__dot">•</span>
+      <span className="sidebar__dot" aria-hidden="true">•</span>
       <span className="sidebar__project-name">{project.name}</span>
-      <span
+      <button
+        type="button"
         className="sidebar__project-delete"
         data-testid="delete-project"
         onClick={() => setShowConfirm(!showConfirm)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') setShowConfirm(!showConfirm);
-        }}
-        tabIndex={0}
-        role="button"
-        aria-label="Confirm deletion of project"
+        aria-label={`Delete project ${project.name}`}
+        aria-expanded={showConfirm}
       >
-        <FaTrashAlt />
+        <FaTrashAlt aria-hidden="true" />
         {showConfirm && (
-          <div className="project-delete-modal">
+          <div 
+            className="project-delete-modal"
+            role="dialog"
+            aria-labelledby="delete-confirm-heading"
+            aria-modal="true"
+          >
             <div className="project-delete-modal__inner">
-              <p>Are you sure you want to delete this project?</p>
+              <p id="delete-confirm-heading">
+                Are you sure you want to delete this project?
+              </p>
               <button
                 type="button"
                 onClick={() => deleteProject(project.docId)}
+                aria-label={`Confirm delete ${project.name}`}
               >
                 Delete
               </button>
-              <span
+              <button
+                type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') setShowConfirm(!showConfirm);
-                }}
-                tabIndex={0}
-                role="button"
-                aria-label="Cancel adding project, do not delete"
+                aria-label="Cancel deletion"
               >
                 Cancel
-              </span>
+              </button>
             </div>
           </div>
         )}
-      </span>
+      </button>
     </>
   );
 };

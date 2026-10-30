@@ -27,21 +27,31 @@ export const Tasks = () => {
   }
 
   useEffect(() => {
+    const previousTitle = document.title;
     document.title = `${projectName}: Todoist`;
-  });
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [projectName]);
 
   return (
     <div className="tasks" data-testid="tasks">
       <h2 data-testid="project-name">{projectName}</h2>
 
-      <ul className="tasks__list">
-        {tasks.map((task) => (
-          <li key={`${task.id}`}>
-            <Checkbox id={task.id} taskDesc={task.task} />
-            <span>{task.task}</span>
-          </li>
-        ))}
-      </ul>
+      {tasks.length === 0 ? (
+        <div className="tasks__empty" role="status" aria-live="polite">
+          <p>No tasks yet. Add one to get started!</p>
+        </div>
+      ) : (
+        <ul className="tasks__list" aria-label={`Tasks in ${projectName}`}>
+          {tasks.map((task) => (
+            <li key={`${task.id}`}>
+              <Checkbox id={task.id} taskDesc={task.task} />
+              <span className="task-text">{task.task}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <AddTask />
     </div>
