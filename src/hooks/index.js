@@ -1,11 +1,18 @@
 /* eslint-disable no-nested-ternary */
 import { useState, useEffect } from 'react';
 import { format, differenceInDays, parseISO } from 'date-fns';
-import { collection, query, where, orderBy, onSnapshot, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  getDocs,
+} from 'firebase/firestore';
 import { db } from '../firebase';
 import { collatedTasksExist } from '../helpers';
 
-export const useTasks = selectedProject => {
+export const useTasks = (selectedProject) => {
   const [tasks, setTasks] = useState([]);
   const [archivedTasks, setArchivedTasks] = useState([]);
 
@@ -23,15 +30,15 @@ export const useTasks = selectedProject => {
       q = query(q, where('date', '==', ''));
     }
 
-    const unsubscribe = onSnapshot(q, snapshot => {
-      const newTasks = snapshot.docs.map(task => ({
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newTasks = snapshot.docs.map((task) => ({
         id: task.id,
         ...task.data(),
       }));
 
       setTasks(
         selectedProject === 'NEXT_7'
-          ? newTasks.filter(task => {
+          ? newTasks.filter((task) => {
               if (!task.date || task.archived === true) return false;
               try {
                 // Parse the date in DD-MM-YYYY format
@@ -44,9 +51,9 @@ export const useTasks = selectedProject => {
                 return false;
               }
             })
-          : newTasks.filter(task => task.archived !== true)
+          : newTasks.filter((task) => task.archived !== true)
       );
-      setArchivedTasks(newTasks.filter(task => task.archived !== false));
+      setArchivedTasks(newTasks.filter((task) => task.archived !== false));
     });
 
     return () => unsubscribe();
@@ -65,8 +72,8 @@ export const useProjects = () => {
       orderBy('projectId')
     );
 
-    getDocs(q).then(snapshot => {
-      const allProjects = snapshot.docs.map(project => ({
+    getDocs(q).then((snapshot) => {
+      const allProjects = snapshot.docs.map((project) => ({
         ...project.data(),
         docId: project.id,
       }));

@@ -42,13 +42,12 @@ export const AddTask = ({
         task,
         date: collatedDate || taskDate,
         userId: 'jlIFXIwyAL3tzHMtzRbw',
+      }).then(() => {
+        setTask('');
+        setProject('');
+        setShowMain('');
+        setShowProjectOverlay(false);
       })
-        .then(() => {
-          setTask('');
-          setProject('');
-          setShowMain('');
-          setShowProjectOverlay(false);
-        })
     );
   };
 

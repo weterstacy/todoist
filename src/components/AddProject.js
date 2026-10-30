@@ -18,12 +18,11 @@ export const AddProject = ({ shouldShow = false }) => {
       projectId,
       name: projectName,
       userId: 'jlIFXIwyAL3tzHMtzRbw',
-    })
-      .then(() => {
-        setProjects([...projects]);
-        setProjectName('');
-        setShow(false);
-      });
+    }).then(() => {
+      setProjects([...projects]);
+      setProjectName('');
+      setShow(false);
+    });
 
   return (
     <div className="add-project" data-testid="add-project">
