@@ -58,8 +58,8 @@ export const AddProject = ({ shouldShow = false }) => {
   return (
     <div className="add-project" data-testid="add-project">
       {show && (
-        <div 
-          className="add-project__input" 
+        <div
+          className="add-project__input"
           data-testid="add-project-inner"
           role="form"
           aria-labelledby="add-project-heading"
@@ -84,7 +84,11 @@ export const AddProject = ({ shouldShow = false }) => {
               aria-describedby={error ? 'project-error' : undefined}
             />
             {error && (
-              <div id="project-error" className="add-project__error" role="alert">
+              <div
+                id="project-error"
+                className="add-project__error"
+                role="alert"
+              >
                 {error}
               </div>
             )}
@@ -111,7 +115,9 @@ export const AddProject = ({ shouldShow = false }) => {
           </button>
         </div>
       )}
-      <span className="add-project__plus" aria-hidden="true">+</span>
+      <span className="add-project__plus" aria-hidden="true">
+        +
+      </span>
       <button
         type="button"
         aria-label="Add Project"

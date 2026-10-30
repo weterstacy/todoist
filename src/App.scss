@@ -49,7 +49,7 @@ ul {
   padding: 8px;
   text-decoration: none;
   z-index: 100;
-  
+
   &:focus {
     top: 0;
   }
@@ -62,7 +62,8 @@ ul {
 }
 
 // Variables
-$generic-box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px,
+$generic-box-shadow:
+  rgba(0, 0, 0, 0.1) 0px 0px 0px 1px,
   rgba(0, 0, 0, 0.1) 0px 4px 11px;
 $generic-border: 1px solid #f1f1f1;
 $generic-bg: #db4c3f;
@@ -383,7 +384,7 @@ header {
       color: #333;
       display: flex;
       cursor: pointer;
-      line-height: 1.50;
+      line-height: 1.5;
       font-size: 15px;
       padding-left: 0;
       padding-right: 0;

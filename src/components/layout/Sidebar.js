@@ -20,7 +20,12 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="sidebar" data-testid="sidebar" role="navigation" aria-label="Project navigation">
+    <aside
+      className="sidebar"
+      data-testid="sidebar"
+      role="navigation"
+      aria-label="Project navigation"
+    >
       <nav>
         <ul className="sidebar__generic" role="menu" aria-label="Quick access">
           <li
@@ -121,7 +126,11 @@ export const Sidebar = () => {
           <h2>Projects</h2>
         </div>
 
-        <ul className="sidebar__projects" role="menu" aria-label="User projects">
+        <ul
+          className="sidebar__projects"
+          role="menu"
+          aria-label="User projects"
+        >
           {showProjects && <Projects />}
         </ul>
 

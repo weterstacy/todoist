@@ -29,7 +29,9 @@ export const IndividualProject = ({ project }) => {
 
   return (
     <>
-      <span className="sidebar__dot" aria-hidden="true">•</span>
+      <span className="sidebar__dot" aria-hidden="true">
+        •
+      </span>
       <span className="sidebar__project-name">{project.name}</span>
       <button
         type="button"
@@ -41,7 +43,7 @@ export const IndividualProject = ({ project }) => {
       >
         <FaTrashAlt aria-hidden="true" />
         {showConfirm && (
-          <div 
+          <div
             className="project-delete-modal"
             role="dialog"
             aria-labelledby="delete-confirm-heading"

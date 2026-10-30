@@ -43,8 +43,8 @@ export const TaskDate = ({ setTaskDate, showTaskDate, setShowTaskDate }) => {
 
   return (
     showTaskDate && (
-      <div 
-        className="task-date" 
+      <div
+        className="task-date"
         data-testid="task-date-overlay"
         ref={overlayRef}
         role="dialog"
@@ -53,7 +53,9 @@ export const TaskDate = ({ setTaskDate, showTaskDate, setShowTaskDate }) => {
         <ul className="task-date__list" role="menu">
           <li role="none">
             <div
-              onClick={() => handleDateSelect(format(new Date(), 'dd/MM/yyyy'), 'today')}
+              onClick={() =>
+                handleDateSelect(format(new Date(), 'dd/MM/yyyy'), 'today')
+              }
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
@@ -73,11 +75,19 @@ export const TaskDate = ({ setTaskDate, showTaskDate, setShowTaskDate }) => {
           </li>
           <li role="none">
             <div
-              onClick={() => handleDateSelect(format(addDays(new Date(), 1), 'dd/MM/yyyy'), 'tomorrow')}
+              onClick={() =>
+                handleDateSelect(
+                  format(addDays(new Date(), 1), 'dd/MM/yyyy'),
+                  'tomorrow'
+                )
+              }
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleDateSelect(format(addDays(new Date(), 1), 'dd/MM/yyyy'), 'tomorrow');
+                  handleDateSelect(
+                    format(addDays(new Date(), 1), 'dd/MM/yyyy'),
+                    'tomorrow'
+                  );
                 }
               }}
               data-testid="task-date-tomorrow"
@@ -93,11 +103,19 @@ export const TaskDate = ({ setTaskDate, showTaskDate, setShowTaskDate }) => {
           </li>
           <li role="none">
             <div
-              onClick={() => handleDateSelect(format(addDays(new Date(), 7), 'dd/MM/yyyy'), 'next week')}
+              onClick={() =>
+                handleDateSelect(
+                  format(addDays(new Date(), 7), 'dd/MM/yyyy'),
+                  'next week'
+                )
+              }
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleDateSelect(format(addDays(new Date(), 7), 'dd/MM/yyyy'), 'next week');
+                  handleDateSelect(
+                    format(addDays(new Date(), 7), 'dd/MM/yyyy'),
+                    'next week'
+                  );
                 }
               }}
               data-testid="task-date-next-week"

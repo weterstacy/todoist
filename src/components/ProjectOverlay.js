@@ -48,8 +48,8 @@ export const ProjectOverlay = ({
   return (
     projects &&
     showProjectOverlay && (
-      <div 
-        className="project-overlay" 
+      <div
+        className="project-overlay"
         data-testid="project-overlay"
         ref={overlayRef}
         role="dialog"

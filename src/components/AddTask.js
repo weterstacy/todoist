@@ -57,7 +57,13 @@ export const AddTask = ({
       return () => document.removeEventListener('keydown', handleEscape);
     }
     return undefined;
-  }, [showMain, showQuickAddTask, showProjectOverlay, showTaskDate, setShowQuickAddTask]);
+  }, [
+    showMain,
+    showQuickAddTask,
+    showProjectOverlay,
+    showTaskDate,
+    setShowQuickAddTask,
+  ]);
 
   // Focus trap for quick add overlay
   useEffect(() => {
@@ -159,23 +165,27 @@ export const AddTask = ({
           aria-label="Add task"
           role="button"
         >
-          <span className="add-task__plus" aria-hidden="true">+</span>
+          <span className="add-task__plus" aria-hidden="true">
+            +
+          </span>
           <span className="add-task__text">Add Task</span>
         </div>
       )}
 
       {(showMain || showQuickAddTask) && (
-        <div 
-          className="add-task__main" 
+        <div
+          className="add-task__main"
           data-testid="add-task-main"
           role="dialog"
           aria-labelledby="add-task-heading"
-          aria-modal={showQuickAddTask ? "true" : "false"}
+          aria-modal={showQuickAddTask ? 'true' : 'false'}
         >
           {showQuickAddTask && (
             <>
               <div data-testid="quick-add-task">
-                <h2 id="add-task-heading" className="header">Quick Add Task</h2>
+                <h2 id="add-task-heading" className="header">
+                  Quick Add Task
+                </h2>
                 <button
                   className="add-task__cancel-x"
                   data-testid="add-task-quick-cancel"
@@ -256,7 +266,11 @@ export const AddTask = ({
             className="add-task__project"
             data-testid="show-project-overlay"
             onClick={() => setShowProjectOverlay(!showProjectOverlay)}
-            aria-label={showProjectOverlay ? 'Hide project selector' : 'Show project selector'}
+            aria-label={
+              showProjectOverlay
+                ? 'Hide project selector'
+                : 'Show project selector'
+            }
             aria-expanded={showProjectOverlay}
           >
             <FaRegListAlt aria-hidden="true" />
@@ -266,7 +280,9 @@ export const AddTask = ({
             className="add-task__date"
             data-testid="show-task-date-overlay"
             onClick={() => setShowTaskDate(!showTaskDate)}
-            aria-label={showTaskDate ? 'Hide date selector' : 'Show date selector'}
+            aria-label={
+              showTaskDate ? 'Hide date selector' : 'Show date selector'
+            }
             aria-expanded={showTaskDate}
           >
             <FaRegCalendarAlt aria-hidden="true" />

@@ -50,7 +50,9 @@ export const Header = ({ darkMode, setDarkMode }) => {
             <li className="settings__darkmode">
               <button
                 data-testid="dark-mode-action"
-                aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-label={
+                  darkMode ? 'Switch to light mode' : 'Switch to dark mode'
+                }
                 aria-pressed={darkMode}
                 type="button"
                 onClick={() => setDarkMode(!darkMode)}
