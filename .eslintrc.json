@@ -20,6 +20,7 @@
   },
   "rules": {
     "react/prop-types": 0,
+    "react/function-component-definition": 0,
     "react-hooks/rules-of-hooks": "error",
     "no-debugger": 0,
     "no-alert": 0,
