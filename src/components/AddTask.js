@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { FaRegListAlt, FaRegCalendarAlt } from 'react-icons/fa';
-import moment from 'moment';
+import { format, addDays } from 'date-fns';
 import PropTypes from 'prop-types';
-import { firebase } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import { useSelectedProjectValue } from '../context';
 import { ProjectOverlay } from './ProjectOverlay';
 import { TaskDate } from './TaskDate';
@@ -27,30 +28,26 @@ export const AddTask = ({
     let collatedDate = '';
 
     if (projectId === 'TODAY') {
-      collatedDate = moment().format('DD/MM/YYYY');
+      collatedDate = format(new Date(), 'dd/MM/yyyy');
     } else if (projectId === 'NEXT_7') {
-      collatedDate = moment().add(7, 'days').format('DD/MM/YYYY');
+      collatedDate = format(addDays(new Date(), 7), 'dd/MM/yyyy');
     }
 
     return (
       task &&
       projectId &&
-      firebase
-        .firestore()
-        .collection('tasks')
-        .add({
-          archived: false,
-          projectId,
-          task,
-          date: collatedDate || taskDate,
-          userId: 'jlIFXIwyAL3tzHMtzRbw',
-        })
-        .then(() => {
-          setTask('');
-          setProject('');
-          setShowMain('');
-          setShowProjectOverlay(false);
-        })
+      addDoc(collection(db, 'tasks'), {
+        archived: false,
+        projectId,
+        task,
+        date: collatedDate || taskDate,
+        userId: 'jlIFXIwyAL3tzHMtzRbw',
+      }).then(() => {
+        setTask('');
+        setProject('');
+        setShowMain('');
+        setShowProjectOverlay(false);
+      })
     );
   };
 

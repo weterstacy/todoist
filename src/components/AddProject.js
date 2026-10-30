@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { firebase } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import { generatePushId } from '../helpers';
 import { useProjectsValue } from '../context';
 
@@ -13,19 +14,15 @@ export const AddProject = ({ shouldShow = false }) => {
 
   const addProject = () =>
     projectName &&
-    firebase
-      .firestore()
-      .collection('projects')
-      .add({
-        projectId,
-        name: projectName,
-        userId: 'jlIFXIwyAL3tzHMtzRbw',
-      })
-      .then(() => {
-        setProjects([...projects]);
-        setProjectName('');
-        setShow(false);
-      });
+    addDoc(collection(db, 'projects'), {
+      projectId,
+      name: projectName,
+      userId: 'jlIFXIwyAL3tzHMtzRbw',
+    }).then(() => {
+      setProjects([...projects]);
+      setProjectName('');
+      setShow(false);
+    });
 
   return (
     <div className="add-project" data-testid="add-project">

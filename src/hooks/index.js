@@ -1,48 +1,59 @@
 /* eslint-disable no-nested-ternary */
 import { useState, useEffect } from 'react';
-import moment from 'moment';
-import { firebase } from '../firebase';
+import { format, differenceInDays } from 'date-fns';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  getDocs,
+} from 'firebase/firestore';
+import { db } from '../firebase';
 import { collatedTasksExist } from '../helpers';
 
-export const useTasks = selectedProject => {
+export const useTasks = (selectedProject) => {
   const [tasks, setTasks] = useState([]);
   const [archivedTasks, setArchivedTasks] = useState([]);
 
   useEffect(() => {
-    let unsubscribe = firebase
-      .firestore()
-      .collection('tasks')
-      .where('userId', '==', 'jlIFXIwyAL3tzHMtzRbw');
+    let q = query(
+      collection(db, 'tasks'),
+      where('userId', '==', 'jlIFXIwyAL3tzHMtzRbw')
+    );
 
-    unsubscribe =
-      selectedProject && !collatedTasksExist(selectedProject)
-        ? (unsubscribe = unsubscribe.where('projectId', '==', selectedProject))
-        : selectedProject === 'TODAY'
-        ? (unsubscribe = unsubscribe.where(
-            'date',
-            '==',
-            moment().format('DD/MM/YYYY')
-          ))
-        : selectedProject === 'INBOX' || selectedProject === 0
-        ? (unsubscribe = unsubscribe.where('date', '==', ''))
-        : unsubscribe;
+    if (selectedProject && !collatedTasksExist(selectedProject)) {
+      q = query(q, where('projectId', '==', selectedProject));
+    } else if (selectedProject === 'TODAY') {
+      q = query(q, where('date', '==', format(new Date(), 'dd/MM/yyyy')));
+    } else if (selectedProject === 'INBOX' || selectedProject === 0) {
+      q = query(q, where('date', '==', ''));
+    }
 
-    unsubscribe = unsubscribe.onSnapshot(snapshot => {
-      const newTasks = snapshot.docs.map(task => ({
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newTasks = snapshot.docs.map((task) => ({
         id: task.id,
         ...task.data(),
       }));
 
       setTasks(
         selectedProject === 'NEXT_7'
-          ? newTasks.filter(
-              task =>
-                moment(task.date, 'DD-MM-YYYY').diff(moment(), 'days') <= 7 &&
-                task.archived !== true
-            )
-          : newTasks.filter(task => task.archived !== true)
+          ? newTasks.filter((task) => {
+              if (!task.date || task.archived === true) return false;
+              try {
+                // Parse the date in DD-MM-YYYY format
+                const [day, month, year] = task.date.split('-');
+                const taskDate = new Date(year, month - 1, day);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return differenceInDays(taskDate, today) <= 7;
+              } catch (e) {
+                return false;
+              }
+            })
+          : newTasks.filter((task) => task.archived !== true)
       );
-      setArchivedTasks(newTasks.filter(task => task.archived !== false));
+      setArchivedTasks(newTasks.filter((task) => task.archived !== false));
     });
 
     return () => unsubscribe();
@@ -55,22 +66,22 @@ export const useProjects = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection('projects')
-      .where('userId', '==', 'jlIFXIwyAL3tzHMtzRbw')
-      .orderBy('projectId')
-      .get()
-      .then(snapshot => {
-        const allProjects = snapshot.docs.map(project => ({
-          ...project.data(),
-          docId: project.id,
-        }));
+    const q = query(
+      collection(db, 'projects'),
+      where('userId', '==', 'jlIFXIwyAL3tzHMtzRbw'),
+      orderBy('projectId')
+    );
 
-        if (JSON.stringify(allProjects) !== JSON.stringify(projects)) {
-          setProjects(allProjects);
-        }
-      });
+    getDocs(q).then((snapshot) => {
+      const allProjects = snapshot.docs.map((project) => ({
+        ...project.data(),
+        docId: project.id,
+      }));
+
+      if (JSON.stringify(allProjects) !== JSON.stringify(projects)) {
+        setProjects(allProjects);
+      }
+    });
   }, [projects]);
 
   return { projects, setProjects };
