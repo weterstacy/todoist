@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import { format, addDays } from 'date-fns';
 import { FaSpaceShuttle, FaSun, FaRegPaperPlane } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 
@@ -11,12 +11,12 @@ export const TaskDate = ({ setTaskDate, showTaskDate, setShowTaskDate }) =>
           <div
             onClick={() => {
               setShowTaskDate(false);
-              setTaskDate(moment().format('DD/MM/YYYY'));
+              setTaskDate(format(new Date(), 'dd/MM/yyyy'));
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 setShowTaskDate(false);
-                setTaskDate(moment().format('DD/MM/YYYY'));
+                setTaskDate(format(new Date(), 'dd/MM/yyyy'));
               }
             }}
             data-testid="task-date-today"
@@ -34,12 +34,12 @@ export const TaskDate = ({ setTaskDate, showTaskDate, setShowTaskDate }) =>
           <div
             onClick={() => {
               setShowTaskDate(false);
-              setTaskDate(moment().add(1, 'day').format('DD/MM/YYYY'));
+              setTaskDate(format(addDays(new Date(), 1), 'dd/MM/yyyy'));
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 setShowTaskDate(false);
-                setTaskDate(moment().add(1, 'day').format('DD/MM/YYYY'));
+                setTaskDate(format(addDays(new Date(), 1), 'dd/MM/yyyy'));
               }
             }}
             data-testid="task-date-tomorrow"
@@ -57,12 +57,12 @@ export const TaskDate = ({ setTaskDate, showTaskDate, setShowTaskDate }) =>
           <div
             onClick={() => {
               setShowTaskDate(false);
-              setTaskDate(moment().add(7, 'days').format('DD/MM/YYYY'));
+              setTaskDate(format(addDays(new Date(), 7), 'dd/MM/yyyy'));
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 setShowTaskDate(false);
-                setTaskDate(moment().add(7, 'days').format('DD/MM/YYYY'));
+                setTaskDate(format(addDays(new Date(), 7), 'dd/MM/yyyy'));
               }
             }}
             data-testid="task-date-next-week"
