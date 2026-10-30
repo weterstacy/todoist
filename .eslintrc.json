@@ -21,9 +21,16 @@
   "rules": {
     "react/prop-types": 0,
     "react/function-component-definition": 0,
+    "react/jsx-no-useless-fragment": 0,
+    "react/no-unused-prop-types": 0,
+    "react/jsx-no-constructed-context-values": 0,
     "react-hooks/rules-of-hooks": "error",
     "no-debugger": 0,
     "no-alert": 0,
+    "no-var": 0,
+    "vars-on-top": 0,
+    "no-plusplus": 0,
+    "block-scoped-var": 0,
     "no-unused-vars": [
       1,
       {
